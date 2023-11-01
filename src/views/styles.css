@@ -1,0 +1,29 @@
+.image-creator-container {
+  height: 100%;
+  width: 100%;
+
+  .header-container {
+    padding: 0 15px;
+    margin-bottom: 15px;
+    margin-top: -15px;
+  }
+
+  .input-container {
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+    height: 50%;
+  }
+
+  .interactive-input-and-toolbar {
+    display: flex;
+    height: inherit;
+    box-sizing: border-box;
+    cursor: text;
+    margin: 0 12px;
+    border-radius: 4px;
+    position: relative;
+    padding-left: -10px;
+    padding-top: 10px;
+  }
+}
