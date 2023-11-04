@@ -5,6 +5,7 @@
     "main": "./src/index.js",
     "author": "hubai",
     "license": "MIT",
+    "icon": "public/icon.png",
     "engines": {
         "hubai": "^0.0.1"
     },
