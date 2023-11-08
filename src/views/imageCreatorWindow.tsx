@@ -11,6 +11,7 @@ import { ImageCreatorMessage } from '../models/imageCreatorState';
 import usePersistentState from '../hooks/persistentState';
 import generateUniqueId from '../utils/uniqueId';
 import { debounce } from '../utils/debounce';
+import { openImageFileSelector, prettifyFileSize } from '../utils/file';
 
 const {
   Icon,
@@ -23,6 +24,9 @@ const {
   Message,
   ChatInput,
   ChatAction,
+  FileMosaic,
+  DragDropZone,
+  useDragDropZone,
 } = component;
 
 export type Props = {
@@ -31,6 +35,14 @@ export type Props = {
   brainClientManager: IBrainClientManager;
   name: string;
   onChangeName: (e: React.ChangeEvent<HTMLInputElement>) => void;
+};
+
+export type AttachedFile = {
+  id: string;
+  name: string;
+  size: string;
+  previewUrl: string;
+  file: File;
 };
 
 function getFileSrc(file: Buffer | string, mimeType: string) {
@@ -60,6 +72,7 @@ function ImageCreatorView({
     [],
     `imageCreator.${id}.messages`
   );
+  const [files, setFiles] = useState<AttachedFile[]>([]);
 
   const [selectedBrain, setSelectedBrain] = usePersistentState<
     LocalBrain | undefined
@@ -99,6 +112,7 @@ function ImageCreatorView({
     }
 
     chatInputRef.current?.setValue('');
+    setFiles([]);
 
     brain.imageGeneration
       ?.generateImage([
@@ -107,6 +121,12 @@ function ImageCreatorView({
           sentAt: getCurrentUtcDate(),
           value: prompt,
           expectedResponseType: 'base64',
+          attachments: files.map((f) => ({
+            path: f.file.path,
+            mimeType: f.file.type,
+            size: f.file.size,
+            originalFileName: f.file.name,
+          })),
         },
       ])
       .then(async (res) => {
@@ -155,8 +175,59 @@ function ImageCreatorView({
     [setSelectedBrain]
   );
 
+  const attachFile = useCallback(
+    (file: File) => {
+      if (!file.type.startsWith('image')) {
+        console.log('File is not an image');
+        return;
+      }
+
+      let previewUrl = URL.createObjectURL(file);
+
+      const attachment = {
+        id: generateUniqueId(),
+        name: file.name,
+        size: prettifyFileSize(file.size),
+        previewUrl,
+        file,
+      };
+      files.push(attachment);
+      setFiles([...files]);
+    },
+    [files]
+  );
+
+  const attachFiles = useCallback(
+    (files: FileList) => {
+      for (let i = 0; i < files.length; i++) {
+        attachFile(files[i]);
+      }
+    },
+    [attachFile]
+  );
+
+  const { getDragProps, isDragging } = useDragDropZone({ onDrop: attachFiles });
+
+  const removeAttachedFile = useCallback(
+    (file: component.TFileMosaicItem) => {
+      const index = files.findIndex((f) => f.id === file.id);
+      if (index === -1) return;
+
+      files.splice(index, 1);
+      setFiles([...files]);
+    },
+    [files]
+  );
+
+  const onAttachFileButtonClick = useCallback(() => {
+    openImageFileSelector((file) => {
+      attachFile(file);
+    });
+  }, [attachFile]);
+
   return (
-    <div className="image-creator-container">
+    <div className="image-creator-container" {...getDragProps()}>
+      <DragDropZone dragOver={isDragging} />
       <div className="header-container">
         <Input
           placeholder="Creation Name"
@@ -190,6 +261,18 @@ function ImageCreatorView({
             ))}
           </Select>
         </div>
+
+        <div style={{ marginTop: 15 }}>
+          <FileMosaic
+            files={files.map((f) => ({
+              id: f.id,
+              title: f.name,
+              image: f.previewUrl,
+              description: f.size,
+            }))}
+            onRemove={removeAttachedFile}
+          />
+        </div>
       </div>
 
       <div style={{ height: '90%', width: '100%' }}>
@@ -204,6 +287,12 @@ function ImageCreatorView({
               <Chat.Actions>
                 <Chat.Action className="send-button" onClick={onSubmit}>
                   <Icon type={loading ? 'loading~spin' : 'send'} />
+                </Chat.Action>
+                <Chat.Action
+                  className="send-button"
+                  onClick={onAttachFileButtonClick}
+                >
+                  <Icon type="file-media" />
                 </Chat.Action>
               </Chat.Actions>
             </Chat.InteractionContainer>
