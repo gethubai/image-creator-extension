@@ -10,7 +10,7 @@
         "hubai": "^0.0.1"
     },
     "dependencies": {
-        "@hubai/core": "^0.0.20",
+        "@hubai/core": "^0.0.21",
         "monaco-editor": "^0.31.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
@@ -46,7 +46,8 @@
     "keywords": [
         "ImageCreator",
         "Image",
-        "AI Vision",
+        "AI",
+        "Vision",
         "Creator"
     ],
     "categories": [
