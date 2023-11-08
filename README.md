@@ -1,2 +1,7 @@
 # image-creator-extension
-Source code for the Image Creator extension for HubAI app
+
+Generate images with AI using custom prompts
+
+## Preview
+![image](https://github.com/gethubai/image-creator-extension/blob/main/public/screenshot.png?raw=true)
+
