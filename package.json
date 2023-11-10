@@ -1,6 +1,6 @@
 {
     "name": "image-creator",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "description": "Generate images using AI",
     "main": "./src/index.js",
     "author": "hubai",
@@ -10,7 +10,7 @@
         "hubai": "^0.0.1"
     },
     "dependencies": {
-        "@hubai/core": "^0.0.21",
+        "@hubai/core": "^0.0.22",
         "monaco-editor": "^0.31.0",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
