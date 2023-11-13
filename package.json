@@ -1,13 +1,13 @@
 {
     "name": "image-creator",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Generate images using AI",
     "main": "./src/index.js",
     "author": "hubai",
     "license": "MIT",
     "icon": "public/icon.png",
     "engines": {
-        "hubai": "^0.0.1"
+        "hubai": ">= 0.1.0-alpha.13 || 1.x"
     },
     "dependencies": {
         "@hubai/core": "^0.0.22",

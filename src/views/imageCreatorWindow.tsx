@@ -238,7 +238,7 @@ function ImageCreatorView({
           }}
         />
         <div>
-          <label htmlFor="brain-selector">Select the brain:</label>
+          <label htmlFor="brain-selector">Select the brain: </label>
           <Select
             id="brain-selector"
             value={selectedBrain?.id ?? ''}
